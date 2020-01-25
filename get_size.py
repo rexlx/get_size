@@ -1,5 +1,6 @@
 import os
-import argparse
+import sys
+# import argparse
 
 
 # --USER--VARIABLES-- #
@@ -8,19 +9,10 @@ user_source = "./"
 
 
 def get_args():
-    """
-    gets cli args via the argparse module
-    """
-    msg = """This tool gets the size of a directory and displays info about the
-contents"""
-    # create an instance of parser from the argparse module
-    parser = argparse.ArgumentParser(description=msg)
-    # add expected arguments
-    parser.add_argument('-s', dest='source', required=False, help="source dir")
-    args = parser.parse_args()
-    if args.source:
-        source = args.source
-    else:
+    try:
+        source = sys.argv[1]
+    except Exception as e:
+        print("didnt specify a directoy, using {}".format(user_source))
         source = user_source
     return source
 
@@ -72,6 +64,7 @@ def find_ext(files):
     will count files by extension
     """
     extension = []
+    size_by_ext = {}
     total_size = 0
     for i in files:
         # get the size of the file
@@ -81,21 +74,25 @@ def find_ext(files):
             print("skipping symbolic link: {}".format(i))
         # the file name and extension as per os splitext
         fname, file_ext = os.path.splitext(i)
+        if file_ext in size_by_ext.keys():
+            size_by_ext[file_ext] += os.path.getsize(i)
+        else:
+            size_by_ext[file_ext] = os.path.getsize(i)
         # append the extension list
         extension.append(file_ext)
+
     # padding is longest extension length + 1
     pad = max(len(e) for e in extension) + 1
     # determine the size in B, K, M, G, T
     final_size = interpret_size(total_size)
-    # create a set from the extension list (essentially just a list of
-    # unique extensions)
-    extensions = set(extension)
     print("found the following extensions:\n")
     # for each uniq extension
-    for i in extensions:
+    # for i in size_by_ext.keys():
+    for k, v in size_by_ext.items():
+        val = interpret_size(v)
         # print the extension plus the padding then the occurence of
         # the ext.
-        print(i.ljust(pad), extension.count(i))
+        print(val.ljust(8), k.ljust(pad), extension.count(k))
     # display total files and size
     print("found {} files totaling {} in size".format(len(files), final_size))
 
