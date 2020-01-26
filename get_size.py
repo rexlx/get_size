@@ -67,19 +67,23 @@ def find_ext(files):
     size_by_ext = {}
     total_size = 0
     for i in files:
-        # get the size of the file
-        if not os.path.islink(i):
-            total_size += os.path.getsize(i)
-        else:
-            print("skipping symbolic link: {}".format(i))
-        # the file name and extension as per os splitext
-        fname, file_ext = os.path.splitext(i)
-        if file_ext in size_by_ext.keys():
-            size_by_ext[file_ext] += os.path.getsize(i)
-        else:
-            size_by_ext[file_ext] = os.path.getsize(i)
-        # append the extension list
-        extension.append(file_ext)
+        try:
+            # get the size of the file
+            if not os.path.islink(i):
+                total_size += os.path.getsize(i)
+            else:
+                print("skipping symbolic link: {}".format(i))
+            # the file name and extension as per os splitext
+            fname, file_ext = os.path.splitext(i)
+            if file_ext in size_by_ext.keys():
+                size_by_ext[file_ext] += os.path.getsize(i)
+            else:
+                size_by_ext[file_ext] = os.path.getsize(i)
+            # append the extension list
+            extension.append(file_ext)
+        except Exception as e:
+            print("encountered an expception\n{}\ncontinuing...".format(e))
+            continue
 
     # padding is longest extension length + 1
     pad = max(len(e) for e in extension) + 1
