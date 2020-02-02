@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import sys
 # import argparse
@@ -40,22 +41,22 @@ def interpret_size(size):
     kib = 1024
     data = float(size)
     if data >= tib:
-        symbol = 'TB'
+        symbol = ' TB'
         new_data = data / tib
     elif data >= gib:
-        symbol = 'GB'
+        symbol = ' GB'
         new_data = data / gib
     elif data >= mib:
-        symbol = 'MB'
+        symbol = ' MB'
         new_data = data / mib
     elif data >= kib:
-        symbol = 'KB'
+        symbol = ' KB'
         new_data = data / kib
     elif data >= 0:
-        symbol = ' B'
+        symbol = '  B'
         new_data = data
     formated_data = "{0:.2f}".format(new_data)
-    converted_data = str(formated_data) + symbol
+    converted_data = str(formated_data).rjust(8) + symbol
     return converted_data
 
 
@@ -73,8 +74,11 @@ def find_ext(files):
                 total_size += os.path.getsize(i)
             else:
                 print("skipping symbolic link: {}".format(i))
+                continue
             # the file name and extension as per os splitext
             fname, file_ext = os.path.splitext(i)
+            if len(file_ext) < 1:
+                file_ext = "(None)"
             if file_ext in size_by_ext.keys():
                 size_by_ext[file_ext] += os.path.getsize(i)
             else:
