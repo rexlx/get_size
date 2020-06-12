@@ -68,6 +68,9 @@ def find_ext(files):
     size_by_ext = {}
     total_size = 0
     for i in files:
+        if i == '/proc/kcore':
+            print('skipping proc/kcore...')
+            continue
         try:
             # get the size of the file
             if not os.path.islink(i):
