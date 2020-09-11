@@ -12,7 +12,7 @@ user_source = "./"
 def get_args():
     try:
         source = sys.argv[1]
-    except Exception as e:
+    except Exception as _:
         print("didnt specify a directoy, using {}".format(user_source))
         source = user_source
     return source
@@ -25,9 +25,11 @@ def get_files(source):
     """
     # list comprehension the joins the direcctory
     # path and file name
-    file_list = [os.path.join(dir_path, x)
+    file_list = [
+                 os.path.join(dir_path, x)
                  for dir_path, dirs, files in os.walk(source)
-                 for x in files]
+                 for x in files
+                ]
     return file_list
 
 
@@ -68,6 +70,7 @@ def find_ext(files):
     size_by_ext = {}
     total_size = 0
     for i in files:
+        # this file is interpreted too be several TB, skip
         if i == '/proc/kcore':
             print('skipping proc/kcore...')
             continue
@@ -79,7 +82,7 @@ def find_ext(files):
                 print("skipping symbolic link: {}".format(i))
                 continue
             # the file name and extension as per os splitext
-            fname, file_ext = os.path.splitext(i)
+            _, file_ext = os.path.splitext(i)
             if len(file_ext) < 1:
                 file_ext = "(None)"
             if file_ext in size_by_ext.keys():
