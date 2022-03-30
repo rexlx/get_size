@@ -1,30 +1,18 @@
-#!/usr/bin/env python
 import os
 import sys
-# import argparse
-
-
-# --USER--VARIABLES-- #
-user_source = "./"
-# --USER--VARIABLES-- #
-
-
-def get_args():
-    try:
-        source = sys.argv[1]
-    except Exception as e:
-        print("didnt specify a directoy, using {}".format(user_source))
-        source = user_source
-    return source
 
 
 def get_files(source):
+    """Using the os walk function, recursively get a list of files in
+       the target directory. Returns a list of strings
+
+    Args:
+        source (str): directory path
+
+    Returns:
+        list: list of strings
     """
-    utilizes the os module walk function to create
-    a list of files recursively
-    """
-    # list comprehension the joins the direcctory
-    # path and file name
+    # list comprehension joins the direcctory path and file name
     file_list = [os.path.join(dir_path, x)
                  for dir_path, dirs, files in os.walk(source)
                  for x in files]
@@ -32,32 +20,19 @@ def get_files(source):
 
 
 def interpret_size(size):
+    """converts bytes into something humans can read
+
+    Args:
+        size (int): an integer
+
+    Returns:
+        (str): human readable string
     """
-    convert bytes to human readable
-    """
-    tib = 1024 ** 4
-    gib = 1024 ** 3
-    mib = 1024 ** 2
-    kib = 1024
-    data = float(size)
-    if data >= tib:
-        symbol = ' TB'
-        new_data = data / tib
-    elif data >= gib:
-        symbol = ' GB'
-        new_data = data / gib
-    elif data >= mib:
-        symbol = ' MB'
-        new_data = data / mib
-    elif data >= kib:
-        symbol = ' KB'
-        new_data = data / kib
-    elif data >= 0:
-        symbol = '  B'
-        new_data = data
-    formated_data = "{0:.2f}".format(new_data)
-    converted_data = str(formated_data).rjust(8) + symbol
-    return converted_data
+    for unit in ['  B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']:
+        if size < 1024 or unit == "PiB":
+            break
+        size /= 1024.0
+    return f"{size:7.2f} {unit}"
 
 
 def find_ext(files):
@@ -68,20 +43,14 @@ def find_ext(files):
     size_by_ext = {}
     total_size = 0
     for i in files:
-        if i == '/proc/kcore':
-            print('skipping proc/kcore...')
-            continue
         try:
             # get the size of the file
             if not os.path.islink(i):
                 total_size += os.path.getsize(i)
             else:
-                print("skipping symbolic link: {}".format(i))
-                continue
+                print(f"skipping symbolic link: {i}")
             # the file name and extension as per os splitext
-            fname, file_ext = os.path.splitext(i)
-            if len(file_ext) < 1:
-                file_ext = "(None)"
+            _, file_ext = os.path.splitext(i)
             if file_ext in size_by_ext.keys():
                 size_by_ext[file_ext] += os.path.getsize(i)
             else:
@@ -89,7 +58,7 @@ def find_ext(files):
             # append the extension list
             extension.append(file_ext)
         except Exception as e:
-            print("encountered an expception\n{}\ncontinuing...".format(e))
+            print(f"encountered an expception\n{e}\ncontinuing...")
             continue
 
     # padding is longest extension length + 1
@@ -105,12 +74,19 @@ def find_ext(files):
         # the ext.
         print(val.ljust(8), k.ljust(pad), extension.count(k))
     # display total files and size
-    print("found {} files totaling {} in size".format(len(files), final_size))
+    print(f"found {len(files)} files totaling {final_size} in size")
 
 
 def main():
     # get the args
-    source = get_args()
+    try:
+        source = sys.argv[1]
+    except Exception as e:
+        print(
+            f"got an error!\t{e}\nprogram exiting....\n"
+            f"help:\nexpected a directory as an arg"
+            )
+        sys.exit(1)
     # get the file list
     files = get_files(source)
     # get our information
