@@ -1,33 +1,36 @@
 # get_size
 get the size of a directory in python
 
-pass it a directory path. **note** the None extension is the result of a file without an ext, such as a binary
+You can create an alias in your bashrc/zshrc or cp the file into somewhere on your path (for instance $HOME/bin/), add the shebang line, and make the file executable:
+<br>
+```
+rxlx ~ $ head $HOME/bin/get-size 
+#!/usr/bin/env python3    #<--example shebang line
+(code truncated for brevity)
 
-```bash
-$ python get_size.py /home/rxlx/Documents/
+rxlx ~ $ which get-size 
+/home/rxlx/bin/get-size
+rxlx ~ $ get-size $HOME/bin/
+skipping symbolic link: /home/rxlx/bin/python
 found the following extensions:
 
-   15.50 KB .docx     1
-  530.59 KB .md       109
-   74.82 KB .go       11
-    1.09 MB .js       115
-    4.00 KB .html     2
-  313.93 KB .css      3
-  113.90 KB .png      1
-   19.50 MB (None)    540
-    7.13 MB .pack     3
-   24.69 KB .idx      3
-  260.10 KB .sample   169
-  553.05 KB .json     68
-  186.00  B .yml      2
-   14.71 KB .ts       5
-   77.29 KB .py       14
-  788.00  B .service  4
-  340.00 KB .db       1
-  408.30 KB .jpg      2
-    2.25 KB .opf      2
-  410.27 KB .epub     2
-    1.74 MB .txt      2
-    1.70 MB .pdf      1
-found 1061 files totaling    34.24 MB in size
+ 113.93 MiB         41
+ 339.72 KiB .txt    48
+ 207.81 KiB .py     102
+   2.46 KiB .sh     7
+  12.00 KiB .swp    1
+   8.21 KiB .pyc    5
+ 196.10 KiB .zip    3
+   1.22 MiB .log    5
+ 596.00   B .yml    1
+ 394.00   B .exp    6
+  55.00   B .com    1
+ 907.00   B .rex    3
+  44.00   B .link   1
+ 576.00   B .dconf  1
+  68.00   B .stuff  2
+ 332.00   B .notes  1
+   1.10 KiB .xml    1
+found 229 files totaling  110.67 MiB in size
+rxlx ~ $
 ```
